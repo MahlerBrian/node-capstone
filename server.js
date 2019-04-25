@@ -32,7 +32,7 @@ function runServer(databaseUrl, port=PORT) {
         });
       });
     });
-  }
+}
 
 function closeServer() {
     return mongoose.disconnect().then(() => {
