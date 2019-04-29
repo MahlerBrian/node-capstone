@@ -1,1 +1,41 @@
-<p>Hello world</p>
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <meta name="description" content="This app helps you pack for an upcoming trip">
+        <meta name="keywords" content="Travel,Packing,Luggage,Baggage,Suitcase,checklist,Thinkful,Capstone">
+        <meta name="author" content="Brian Albert">
+        <title>BagCheck</title>
+        <script src="https://code.jquery.com/jquery.min.js"></script>
+        <link href="main.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="app.js" async></script>
+    </head>
+
+    <body>
+        <main aria-live="polite">
+            <header>
+                <h1>Pack your bags...</h1>
+                <h3>Tell BagCheck where you're going and for how long.</h3> 
+                <h3>We'll give you a packing list template.</h3>
+                <h3>Mark items as 'packed' while you pack, so you'll never forget to bring what you need.</h3>                
+            </header>
+            
+            <form id="sign-in">
+                <h3>Please login</h3>
+                <label>Username:</label><input type="text" class="username" placeholder="Enter your username">
+                <label>Password:</label><input type="text" class="password" placeholder="Enter your password">
+                <button type="submit" class="submit">Let's go!</button>
+                <p>New user? Sign up <a id="signup">here.</a></p>  <!--Use jquery to toggle signup/sign-in forms-->
+            </form>
+            <form id="sign-up">
+                <h3>Sign up here</h3>
+                <label>Username:</label><input type="text" class="username" placeholder="Enter your username">
+                <label>Password:</label><input type="text" class="password" placeholder="Enter your password">
+                <button type="submit" class="submit">Let's go!</button>
+            </form>
+            
+        </main>    
+        </body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <meta name="description" content="This app helps you pack for an upcoming trip">
+        <meta name="keywords" content="Travel,Packing,Luggage,Baggage,Suitcase,checklist,Thinkful,Capstone">
+        <meta name="author" content="Brian Albert">
+        <title>BagCheck</title>
+        <script src="https://code.jquery.com/jquery.min.js"></script>
+        <link href="main.css" rel="stylesheet" type="text/css"/>
+        <script type="text/javascript" src="app.js" async></script>
+    </head>
+
+    <body>
+        <main aria-live="polite">
+            <Nav id="saved-trips"><div class="trip"></div></Nav>
+            <header>Where are you going?</header>
+            
+            <form id="travelplans">
+                <label>Destination:</label><input type="text" id="Destination" placeholder="Enter the name of a city">
+                <label>Trip Duration:</label><input type="number" id="Duration" placeholder="7"><label>days</label>
+                <button type="submit" class="submit">Show my packing list!</button>
+            </form>  <!--Use jquery to toggle between "travelplans" form and "packing-list" display-->
+
+            <article class="packing-list"></article>
+
+        </main>
+    </body>
+</html>
