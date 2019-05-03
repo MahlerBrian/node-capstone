@@ -1,15 +1,21 @@
+'use strict';
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
 const morgan = require('morgan');
+mongoose.Promise = global.Promise;
+
+const {PORT, DATABASE_URL} = require('./config');
+const { SavedTrip } = require('./models');
+let server;
 
 app.use(express.static('public'));
 app.use(morgan('common'));
 app.use(express.json());
 
 
-const {PORT, DATABASE_URL} = require('./config');
-let server;
+
 
 
 app.get('/', (req, res) => {
