@@ -17,10 +17,31 @@ app.use(express.json());
 
 
 
-
 app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/public/index.html`)
-})
+});
+
+app.get('/trips', (req, res) => {
+    SavedTrip
+        .find()
+        .then(trips => {
+            res.json(trips.map(trip => trip.serialize()));
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ error: 'internal server error' });
+        });
+});
+
+app.get('/trips/:id', (req, res) => {
+    SavedTrip
+        .findById(req.params.id)
+        .then(trip => res.json(trip.serialize()))
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ error: 'internal server error' });
+        });
+});
 
 
 
