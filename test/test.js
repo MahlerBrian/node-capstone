@@ -42,9 +42,9 @@ function seedTripData() {
         }   
       }
     }]
-  })
+  });
   return SavedTrip.insertMany(seedData);
-}
+}}
 
 function tearDownDb() {
   console.warn('Deleting database');
