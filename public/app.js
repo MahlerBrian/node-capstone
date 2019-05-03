@@ -84,7 +84,6 @@ function displayTrip(data) {
             `<p>` + data.saved_trips[i].Duration + `</p>` +
             `<p>` + itemCounts  + `</p>`);
     }
-
 }
 
 function getAndDisplayTrip() {

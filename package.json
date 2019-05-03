@@ -6,7 +6,8 @@
   "dependencies": {
     "chai-http": "^4.2.1",
     "express": "^4.16.4",
-    "mongoose": "^5.5.3"
+    "mongoose": "^5.5.3",
+    "morgan": "^1.9.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
