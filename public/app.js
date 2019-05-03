@@ -65,14 +65,35 @@ function getTripData(callbackFn) {
 
 
 function displayTrip(data) {
-    for (index in data.saved_trips) {
+    console.log("displayTrip");
+    for (let i=0; i < data.saved_trips.length; i++) {
+        console.log(i);
+        console.log(data.saved_trips[i].Destination);
+        let itemCounts = "";
+        for (let category in data.saved_trips[i].Suitcase) {
+            console.log(category);
+            itemCounts += `<h2>${category}</h2>`;
+            for (let item in data.saved_trips[i].Suitcase[category]) {
+                console.log(item);
+                let itemCount = `<p>${item}: ${data.saved_trips[i].Suitcase[category][item]}</p>`;
+                itemCounts += itemCount;
+            }
+        }
         $('.packing-list').append(
-            `<p>` + data.saved_trips[index].text + `</p>`);
+            `<p>` + data.saved_trips[i].Destination + `</p>` + //add incrementation and deletion buttons
+            `<p>` + data.saved_trips[i].Duration + `</p>` +
+            `<p>` + itemCounts  + `</p>`);
     }
+
 }
 
 function getAndDisplayTrip() {
-    getTripData(displayTrip);
+    $('#travelplans').submit(function(event) {
+        event.preventDefault();
+        toggleElements();
+        console.log('About to call displayTrip');
+        displayTrip(MOCK_TRIP_DATA);
+    })
 }
 
 //switch out the trip planner form with suitcase template

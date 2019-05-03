@@ -1,8 +1,11 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const morgan = require('morgan');
 
 app.use(express.static('public'));
+app.use(morgan('common'));
+app.use(express.json());
 
 
 const {PORT, DATABASE_URL} = require('./config');
