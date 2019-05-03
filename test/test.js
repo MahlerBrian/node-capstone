@@ -17,7 +17,7 @@ function seedTripData() {
 
   for (let i=1; i<=5; i++) {
     seedData.push({saved_trips: [{
-      destination: faker.name.city(),
+      destination: faker.random('{{address.city}}'),
       duration: faker.random.number(),
       suitcase: {
         clothes: {
