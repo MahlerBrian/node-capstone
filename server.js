@@ -43,7 +43,13 @@ app.get('/trips/:id', (req, res) => {
         });
 });
 
+app.post('/trips', (req, res) => {
+    //entirely new trip
+})
+//two put requests for app.put/trips and app.put/----
 
+//delete endpoint for deleting items from list, 
+//but also deleting entire trips
 
 function runServer(databaseUrl, port=PORT) {
     return new Promise((resolve, reject) => {

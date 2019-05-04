@@ -16,8 +16,8 @@ function seedTripData() {
   const seedData = [];
 
   for (let i=1; i<=5; i++) {
-    seedData.push({saved_trips: [{
-      destination: faker.random('{{address.city}}'),
+    seedData.push({
+      destination: faker.address.city(),
       duration: faker.random.number(),
       suitcase: {
         clothes: {
@@ -41,8 +41,7 @@ function seedTripData() {
           phone: faker.random.boolean()
         }   
       }
-    }]
-  });
+    });
   return SavedTrip.insertMany(seedData);
 }}
 
@@ -107,16 +106,17 @@ describe('Trips API resource', function() {
 
             res.body.forEach(function(trip) {
               expect(trip).to.be.a('object');
-              expect(trip).to.include.keys('id', 'destination', 'duration', 'suitcase');
+              expect(trip).to.include.keys('id', 'destination', 'duration', 'created', 'suitcase');
             });
 
             resTrip = res.body[0];
             return SavedTrip.findById(resTrip.id);
           })
           .then(function(trip) {
+            trip = trip.toObject();
             expect(resTrip.destination).to.equal(trip.destination);
-            expect(resTrip.duration).to.equal(trip.destination);
-            expect(resTrip.suitcase).to.equal(trip.suitcase);
+            expect(resTrip.duration).to.equal(trip.duration);
+            expect(resTrip.suitcase).to.deep.equal(trip.suitcase);
           });
       });
     })
