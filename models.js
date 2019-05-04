@@ -1,9 +1,9 @@
 'use strict';
-
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
-const tripSchema = mongoose.Schema({
+const TripSchema = mongoose.Schema({
     
             destination: {type: String, required: true},
             duration: {type: Number, required: true},
@@ -33,7 +33,7 @@ const tripSchema = mongoose.Schema({
         }
     );
 
-tripSchema.methods.serialize = function() {
+TripSchema.methods.serialize = function() {
     return {
             id: this._id,
             destination: this.destination,
@@ -43,9 +43,34 @@ tripSchema.methods.serialize = function() {
         }
     };
 
-const SavedTrip = mongoose.model('SavedTrip', tripSchema);
-
-//userSchema goes here
+const SavedTrip = mongoose.model('SavedTrip', TripSchema);
 
 
-module.exports = {SavedTrip};
+let UserSchema = mongoose.Schema({
+    firstName: {type: String, required: true},
+    userName: {type: String, required: true, unique: true},
+    password: {type: String, required: true}, 
+    trips: [TripSchema]
+});
+
+UserSchema.methods.serialize = function() {
+    return {
+        id: this._id,
+        firstName: this.firstName,
+        userName: this.userName || '',
+        trips: this.trips
+    };
+};
+
+UserSchema.methods.validatePassword = function(password) {
+    return bcrypt.compare(password, this.password);
+};
+
+UserSchema.statics.hashPassword = function(password) {
+    return bcrypt.hash(password, 10);
+};
+
+const User = mongoose.model('User', UserSchema);
+
+
+module.exports = {SavedTrip, User};

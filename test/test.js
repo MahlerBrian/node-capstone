@@ -119,5 +119,48 @@ describe('Trips API resource', function() {
             expect(resTrip.suitcase).to.deep.equal(trip.suitcase);
           });
       });
+
+    describe('PUT endpoint', function() {
+      it('should update fields', function() {
+          const updateData = {
+            destination: 'tokyo',
+            duration: 14,
+            suitcase: {
+              clothes: {
+                underwear: 0
+              }
+            }
+          };
+          
+          return SavedTrip
+              .findOne()
+              .then(function(trip) {
+                updateData.id = trip.id;
+                return chai.request(app)
+                  .put(`/trips/${trip.id}`)
+                  .send(updateData);
+              })
+              .then(function(res) {
+                expect(res).to.have.status(204);
+                return SavedTrip.findById(updateData.id);
+              })
+              .then(function(trip) {
+                trip = trip.toObject();
+                expect(trip.destination).to.equal(updateData.destination);
+                expect(trip.duration).to.equal(updateData.duration);
+                expect(trip.suitcase).to.equal(updateData.suitcase);
+              });
+        });
+
+    describe('DELETE endpoint', function() {
+      it('should delete a trip by id', function() {
+        let trip;
+
+        
+      })
+    })
+
+
+      })
     })
   })
