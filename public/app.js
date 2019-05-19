@@ -101,6 +101,80 @@ function toggleElements() {
     $('.packing-list').show();
 }
 
+function handleSignup() {
+    $('#sign-up').submit(function(event) {
+        event.preventDefault();
+        let userName = $('#signUpUsername').val();
+        let firstName = $('#signUpFirstName').val();
+        let password = $('#signUpPassword').val();
+        let data = {userName: userName, firstName: firstName, password: password};
+        fetch('/users', {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, cors, *same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrer: 'no-referrer', // no-referrer, *client
+            body: JSON.stringify(data), // body data type must match "Content-Type" header
+        })
+        .then(response => response.json()) // parses JSON response into native Javascript objects 
+        .then(responseJson => handleSignupResponse(responseJson)); 
+    });
+}
+
+function handleSignupResponse(data) {
+    console.log(data);
+    localStorage.setItem('user', data.id);
+    toggleDisplay();
+}
+
+function makeNewTrip() {
+    $('#create-new-trip').submit(function(event) {
+        event.preventDefault();
+        let destination = $('#form-destination').val();
+        let duration = $('#form-duration').val();
+        let data = {destination: destination, duration: duration, userId: localStorage.getItem('user')};
+        fetch('/trips', {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, cors, *same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrer: 'no-referrer', // no-referrer, *client
+            body: JSON.stringify(data), // body data type must match "Content-Type" header
+        })
+        .then(response => response.json()) // parses JSON response into native Javascript objects 
+        .then(responseJson => handleNewTrip(responseJson)); 
+    })
+}
+
+function handleNewTrip(data) {
+    console.log(data);
+}
+
+function toggleDisplay() {
+    $('#landing').hide();
+    $('#dashboard').show();
+}
+
+function checkLoggedIn() {
+    if (localStorage.getItem('user')) {
+        toggleDisplay();
+    }
+}
+
+
 $(function() {
     getAndDisplayTrip();
+    handleSignup();
+    makeNewTrip();
+    checkLoggedIn();
 })

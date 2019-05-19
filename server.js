@@ -1,5 +1,6 @@
 'use strict';
 
+
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -8,6 +9,8 @@ mongoose.Promise = global.Promise;
 
 const {PORT, DATABASE_URL} = require('./config');
 const { SavedTrip, User } = require('./models');
+
+
 let server;
 
 app.use(express.static('public'));
@@ -43,6 +46,14 @@ app.get('/trips/:id', (req, res) => {
         });
 });
 
+//need new endpoint or update existing endpoint
+//to write code for incrementing/toggling suitcase items?
+
+app.patch('/trips', (req, res) => {
+    console.log('updating suitcase items');
+
+})
+
 app.put('/trips/:id', (req, res) => {
     if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
         res.status(400).json({
@@ -51,20 +62,40 @@ app.put('/trips/:id', (req, res) => {
     }
 
     const updated = {};
-    const updateableFields = ['destination', 'duration', 'suitcase'];
-    updateableFields.forEach(field => {
-        if (field in req.body) {
-            updated[field] = req.body[field];
-        }
-    });
+    const updateableFields = ['destination', 'duration',];
+    
+    if (req.body.suitcase == false) {
+        updateableFields.forEach(field => {
+            if (field in req.body) {
+                updated[field] = req.body[field];
+            }
+        });
+    
+        SavedTrip
+            .findByIdAndUpdate(req.params.id, { $set: updated }, { new: true })
+            .then(updatedTrip => res.status(204).end())
+            .catch(err => res.status(500).json({ message: 'internal server error' }));
+    
+    }
 
-    SavedTrip
-        .findByIdAndUpdate(req.params.id, { $set: updated }, { new: true })
-        .then(updatedTrip => res.status(204).end())
-        .catch(err => res.status(500).json({ message: 'internal server error' }));
+    else {
+        return SavedTrip.findById(req.params.id)
+        .then(trip => {
+            trip.suitcase.clothes.socks //etc.  see mongoose documentation
+            if (req.body/*something*/)
+        }) 
+
+    //find way to identify specific field being updated
+    // if statement to check if 'suitcase' is true
+    // then have suitcaseField, (e.g. 'socks') 
+    // increment/decrement, or toggle
+    // savedTrip.findbyID()
+    // trip.suitcase.suitcaseField +=1/-=1
+    // trip.save()
+    }
 });
 
-app.delete('/trips/:id', (req, res) => {
+/*app.delete('/trips/:id', (req, res) => {
 
     const updated = {};
     const updateableFields = ['suitcase'];
@@ -76,12 +107,41 @@ app.delete('/trips/:id', (req, res) => {
             console.log(`Deleted trip with id \`${req.params.id}\``);
             res.status(204).end();
         });
-});
+});*/
 
 
 app.post('/trips', (req, res) => {
-    //entirely new trip
-})
+    const requiredFields = ['destination', 'duration'];
+    for (let i = 0; i < requiredFields.length; i++) {
+        const field = requiredFields[i];
+        if(!(field in req.body)) {
+            const message = `Missing \`${field}\` in request body`
+            console.error(message);
+            return res.status(400).send(message);
+        }
+    }
+
+    SavedTrip
+        .create({
+            destination: req.body.destination,
+            duration: req.body.duration,
+            suitcase: req.body.suitcase
+        })
+        .then(trip => {
+            return User.findById(req.body.userId)
+            .then(user => {
+                user.trips.push(trip);
+                user.save();
+                res.status(201).json(user.serialize())
+            })
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ error: 'internal server error' });
+        });
+});
+
+
 //two put requests for app.put/trips and app.put/----
 
 //delete endpoint for deleting items from list, 
@@ -103,8 +163,10 @@ app.get('/users', (req, res) => {
         })
 });
 
+//post request for new user to login, password validation. 
+
 app.post('/users', (req, res) => {
-    const requiredFields = ['username', 'password'];
+    const requiredFields = ['firstName', 'userName', 'password'];
     requiredFields.forEach(field => {
         if (!(field in req.body)) {
             const message = `Missing \`${field}\` in request body`;
@@ -113,8 +175,7 @@ app.post('/users', (req, res) => {
         }
     });
 
-        User
-            .findOne({ userName: req.body.userName })
+        return User.findOne({ userName: req.body.userName })
             .then(user => {
                 if (user) {
                     const message = `Username already exists`;
@@ -122,15 +183,16 @@ app.post('/users', (req, res) => {
                     return res.status(400).send(message);
                 }
                 else {
-                    User
-                    .create({
-                        firstName: req.body.firstName,
-                        userName: req.body.userName
-                        //password?
+                    return User.hashPassword(req.body.password)
+                    .then(hash => {
+                        return User.create({
+                            firstName: req.body.firstName,
+                            userName: req.body.userName,
+                            password: hash})
                     })
                     .then(user => res.status(201).json(user.serialize()))
                     .catch(err => {
-                        console.err(err);
+                        console.error(err);
                         res.status(500).json({ error: 'internal server error' });
                     });
                 }
@@ -140,6 +202,10 @@ app.post('/users', (req, res) => {
                 res.status(500).json({ error: 'internal server error' });
             });   
 });
+
+/*app.put('/users/:id, (req, res) => {
+    put trip id in body of req 
+})*/
 
 app.put('/users/:id', (req, res) => {
     if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
@@ -179,7 +245,8 @@ app.put('/users/:id', (req, res) => {
         });
 });
 
-app.delete('/users/:id', (req, res) => {
+//change this to put request to delete a trip.
+app.put('/users/:id', (req, res) => {
     SavedTrip
         .remove({ user: req.params.id }) //not sure this is right?
         .then(() => {

@@ -148,19 +148,34 @@ describe('Trips API resource', function() {
                 trip = trip.toObject();
                 expect(trip.destination).to.equal(updateData.destination);
                 expect(trip.duration).to.equal(updateData.duration);
-                expect(trip.suitcase).to.equal(updateData.suitcase);
+                expect(trip.suitcase).to.deep.equal(updateData.suitcase);
               });
-        });
+      });
+    });
 
     describe('DELETE endpoint', function() {
       it('should delete a trip by id', function() {
         let trip;
 
-        
-      })
-    })
+        return SavedTrip
+          .findOne()
+          .then(function(_trip) {
+            trip = _trip;
+            return chai.request(app).delete(`/trips/${trip.id}`);
+          })
+          .then(function(res) {
+            expect(res).to.have.status(204);
+            return SavedTrip.findById(trip.id);
+          })
+          .then(function(_trip) {
+            expect(_trip).to.be.null;
+          });
+      });
+    });
+
+    
 
 
-      })
+      
     })
   })

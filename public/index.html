@@ -22,19 +22,32 @@
                 <h3>Mark items as 'packed' while you pack, so you'll never forget to bring what you need.</h3>                
             </header>
             
-            <form id="sign-in">
-                <h3>Please login</h3>
-                <label>Username:</label><input type="text" class="username" placeholder="Enter your username">
-                <label>Password:</label><input type="text" class="password" placeholder="Enter your password">
-                <button type="submit" class="submit">Let's go!</button>
-                <p>New user? Sign up <a id="signup">here.</a></p>  <!--Use jquery to toggle signup/sign-in forms-->
-            </form>
-            <form id="sign-up">
-                <h3>Sign up here</h3>
-                <label>Username:</label><input type="text" class="username" placeholder="Enter your username">
-                <label>Password:</label><input type="text" class="password" placeholder="Enter your password">
-                <button type="submit" class="submit">Let's go!</button>
-            </form>
+            <div id="landing">
+                <form id="sign-in">
+                    <h3>Please login</h3>
+                    <label>Username:</label><input type="text" class="username" placeholder="Enter your username">
+                    <label>Password:</label><input type="text" class="password" placeholder="Enter your password">
+                    <button type="submit" class="submit">Let's go!</button>
+                    <p>New user? Sign up <a id="signup">here.</a></p>  <!--Use jquery to toggle signup/sign-in forms-->
+                </form>
+                <form id="sign-up">
+                    <h3>Sign up here</h3>
+                    <label>Username:</label><input type="text" id="signUpUsername" placeholder="Enter your username">
+                    <label>Name:</label><input type="text" id="signUpFirstName" placeholder="Enter your name">
+                    <label>Password:</label><input type="text" id="signUpPassword" placeholder="Enter your password">
+                    <button type="submit" class="submit">Let's go!</button>
+                </form>
+            </div>
+
+            <div id="dashboard">
+                <form id="create-new-trip">
+                    <h3>where are you going</h3>
+                    <label>Destination:</label><input type="text" id="form-destination" placeholder="Enter your destination">
+                    <label>Duration:</label><input type="number" id="form-duration" placeholder="Enter the number of days you'll be there">
+                    <button type="submit">create new trip</button>
+                </form>
+                
+            </div>
             
         </main>    
         </body>
