@@ -1,61 +1,4 @@
-let MOCK_TRIP_DATA = {
-    "saved_trips": [
-        {
-            "id": "1111",
-            "Destination": "Athens, Greece",
-            "Duration": 5,
-            "Suitcase": {
-                "Clothes": {
-                    "Shirts": 5,
-                    "Pants": 2,
-                    "Underwear": 5,
-                    "Socks": 5,
-                    "Jacket": 1,
-                    "Shoes": 1
-                },
-                "Toiletries": {
-                    "Toothbrush": 1,
-                    "Toothpaste": 1,
-                    "Deodorant": 1,
-                    "Shampoo": 1,
-                    "Floss": 1
-                },
-                "Essentials": {
-                    "Passport": 1,
-                    "Camera": 1,
-                    "Phone": 1,
-                }
-            }
-        },
-        {
-            "id": "1234",
-            "Destination": "Paris, France",
-            "Duration": 10,
-            "Suitcase": {
-                "Clothes": {
-                    "Shirts": 7,
-                    "Pants": 3,
-                    "Underwear": 10,
-                    "Socks": 10,
-                    "Jacket": 1,
-                    "Shoes": 2
-                },
-                "Toiletries": {
-                    "Toothbrush": 1,
-                    "Toothpaste": 1,
-                    "Deodorant": 1,
-                    "Shampoo": 1,
-                    "Floss": 1
-                },
-                "Essentials": {
-                    "Passport": 1,
-                    "Camera": 1,
-                    "Phone": 1,
-                }
-            }
-        }
-    ]
-};
+
 
 
 //Change this later
@@ -65,35 +8,49 @@ function getTripData(callbackFn) {
 
 
 function displayTrip(data) {
-    console.log("displayTrip");
-    for (let i=0; i < data.saved_trips.length; i++) {
+    console.log("displaying trip");
+    console.log(data);
+  /*change saved_trips to what? */  for (let i=0; i < data.trips.length; i++) {
         console.log(i);
-        console.log(data.saved_trips[i].Destination);
+        console.log(data.trips[i].destination);
         let itemCounts = "";
-        for (let category in data.saved_trips[i].Suitcase) {
+        for (let category in data.trips[i].suitcase) {
             console.log(category);
             itemCounts += `<h2>${category}</h2>`;
-            for (let item in data.saved_trips[i].Suitcase[category]) {
+            for (let item in data.trips[i].suitcase[category]) {
                 console.log(item);
-                let itemCount = `<p>${item}: ${data.saved_trips[i].Suitcase[category][item]}</p>`;
+                let itemCount;
+                if (category == 'clothes') {
+                    console.log('category is clothes');
+                    itemCount = `<p>${item}: ${data.trips[i].suitcase[category][item]}<button class='incrementItem' data-id= '${data.trips[i]._id}' data-category= '${category}' data-item= '${item}'>+</button><button class='decrementItem' data-id= '${data.trips[i]._id}' data-category='${category}' data-item= '${item}'>-</button></p>`;
+                }
+                else {
+                    console.log('category !== clothes'); 
+                    itemCount = `<p>${item}: ${data.trips[i].suitcase[category][item]}<button class='toggleItem'>Toggle</button></p>`;
+                }
                 itemCounts += itemCount;
             }
         }
-        $('.packing-list').append(
-            `<p>` + data.saved_trips[i].Destination + `</p>` + //add incrementation and deletion buttons
-            `<p>` + data.saved_trips[i].Duration + `</p>` +
+        $('.suitcase').append(
+            `<p>` + data.trips[i].destination + `</p>` + //add incrementation and deletion buttons
+            `<p>` + data.trips[i].duration + `</p>` +
             `<p>` + itemCounts  + `</p>`);
     }
 }
+function handleEditButtons() {
+    $('.suitcase').on('click', '.incrementItem', function() {
+        console.log($(this).attr('data-id'));
+    })
+}
 
-function getAndDisplayTrip() {
-    $('#travelplans').submit(function(event) {
+/*function getAndDisplayTrip() {
+    $('#create-new-trip').submit(function(event) {
         event.preventDefault();
         toggleElements();
         console.log('About to call displayTrip');
-        displayTrip(MOCK_TRIP_DATA);
+        displayTrip(/*something else here);
     })
-}
+}*/
 
 //switch out the trip planner form with suitcase template
 function toggleElements() {
@@ -152,12 +109,31 @@ function makeNewTrip() {
             body: JSON.stringify(data), // body data type must match "Content-Type" header
         })
         .then(response => response.json()) // parses JSON response into native Javascript objects 
-        .then(responseJson => handleNewTrip(responseJson)); 
-    })
+        .then(responseJson => displayTrip(responseJson)); 
+    });
 }
 
-function handleNewTrip(data) {
-    console.log(data);
+
+
+function deleteTrip() {
+    $('#deleteTrip').submit(function(event) {
+        event.preventDefault();
+        //something else here
+        fetch('/trips/:id', {
+            method: 'DELETE',
+            mode: 'cors',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            redirect: 'follow',
+            referrer: 'no-referrer',
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(responseJson => displayTrip(responseJson));
+    })
 }
 
 function toggleDisplay() {
@@ -173,8 +149,9 @@ function checkLoggedIn() {
 
 
 $(function() {
-    getAndDisplayTrip();
+    //getAndDisplayTrip();
     handleSignup();
     makeNewTrip();
     checkLoggedIn();
+    handleEditButtons();
 })

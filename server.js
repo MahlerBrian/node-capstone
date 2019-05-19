@@ -78,14 +78,15 @@ app.put('/trips/:id', (req, res) => {
     
     }
 
-    else {
+   else {
         return SavedTrip.findById(req.params.id)
         .then(trip => {
             trip.suitcase.clothes.socks //etc.  see mongoose documentation
-            if (req.body/*something*/)
-        }) 
+            if (req.body/*something*/) {}
+        })
 
-    //find way to identify specific field being updated
+
+    // find way to identify specific field being updated
     // if statement to check if 'suitcase' is true
     // then have suitcaseField, (e.g. 'socks') 
     // increment/decrement, or toggle
@@ -126,6 +127,8 @@ app.post('/trips', (req, res) => {
             destination: req.body.destination,
             duration: req.body.duration,
             suitcase: req.body.suitcase
+            //SavedTrip.suitcase.clothes.shirts.create('shirts', 4);??
+            //SavedTrip.suitcase.clothes.underwear('underwear', ${requiredFields[1]})
         })
         .then(trip => {
             return User.findById(req.body.userId)
@@ -245,6 +248,24 @@ app.put('/users/:id', (req, res) => {
         });
 });
 
+app.delete('/trips/:id', (req, res) => {
+    SavedTrip
+        .findByIdAndRemove(req.params.id)
+        .then(() => {
+            User.findById(req.body.userid)
+        })
+        .then((User) => {
+            let updatedTrips = user.trips.filter(trip => {
+                trip._id != req.params.id;
+            });
+            user.trips = updatedTrips;
+            user.save();
+            return res.status(204);
+        })      
+        .catch(err => res.status(500).json({ message: 'internal server error' }));
+})
+
+
 //change this to put request to delete a trip.
 app.put('/users/:id', (req, res) => {
     SavedTrip
@@ -304,4 +325,3 @@ function closeServer() {
 
   
   module.exports = { runServer, app, closeServer };
-

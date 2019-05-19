@@ -153,7 +153,7 @@ describe('Trips API resource', function() {
       });
     });
 
-    describe('DELETE endpoint', function() {
+    describe('PUT endpoint', function() {
       it('should delete a trip by id', function() {
         let trip;
 
@@ -173,7 +173,7 @@ describe('Trips API resource', function() {
       });
     });
 
-    
+
 
 
       
