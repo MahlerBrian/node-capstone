@@ -9,7 +9,7 @@ const TripSchema = mongoose.Schema({
             duration: {type: Number, required: true},
             created: {type: Date, default: Date.now},
             suitcase: {
-                clothes: { //lookup: if default clothing number can be anchored to duration number.
+                clothes: { 
                     shirts: Number,
                     pants: Number,
                     underwear: Number,
@@ -18,36 +18,20 @@ const TripSchema = mongoose.Schema({
                     shoes: Number
                 },
                 toiletries: {
-                    toothbrush: {type: Boolean, default: false},
-                    toothpaste: {type: Boolean, default: false},
-                    deodorant: {type: Boolean, default: false},
-                    shampoo: {type: Boolean, default: false},
-                    floss: {type: Boolean, default: false},
+                    toothbrush: Boolean,
+                    toothpaste: Boolean, 
+                    deodorant: Boolean,
+                    shampoo: Boolean,
+                    floss: Boolean
                 },
                 essentials: {
-                    passport: {type: Boolean, default: false},
-                    camera: {type: Boolean, default: false},
-                    phone: {type: Boolean, default: false},
+                    passport: Boolean, 
+                    camera: Boolean, 
+                    phone: Boolean
                 }
             }
         }
     );
-
-    TripSchema
-    .pre('save', function(next) {
-        this.suitcase.clothes.shirts = this.duration;
-        this.suitcase.clothes.pants = this.duration /2;
-        this.suitcase.clothes.underwear = this.duration;
-        this.suitcase.clothes.socks = this.duration;
-        this.suitcase.clothes.jacket = 1;
-        this.suitcase.clothes.shoes = 1;
-        next();
-    })
-
-
-
-    
-
 
 
 TripSchema.methods.serialize = function() {
