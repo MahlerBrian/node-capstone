@@ -10,10 +10,14 @@ function getTripData(callbackFn) {
 function displayTrip(data) {
     console.log("displaying trip");
     console.log(data);
+    let itemCounts = "";
     for (let i=0; i < data.trips.length; i++) {
         console.log(i);
         console.log(data.trips[i].destination);
-        let itemCounts = "";
+        //create parent div here?
+        itemCounts += `<p class='destination'>` + data.trips[i].destination + `</p>`
+        itemCounts += `<p class='duration'>` + data.trips[i].duration + ' Days' + `</p>`
+        itemCounts += `<button class="deleteTrip" data-id= '${data.trips[i]._id}'>Delete trip</button>`
         for (let category in data.trips[i].suitcase) {
             console.log(category);
             itemCounts += `<h2>${category}</h2>`;
@@ -31,11 +35,8 @@ function displayTrip(data) {
                 itemCounts += itemCount;
             }
         }
-        $('.suitcase').append(
-            `<p>` + data.trips[i].destination + `</p>` + 
-            `<p>` + data.trips[i].duration + `</p>` +
-            `<p>` + itemCounts  + `</p>`);
     }
+    $('.suitcase').html(itemCounts);
 }
 
 
@@ -144,9 +145,9 @@ function makeNewTrip() {
 
 
 function deleteTrip() {
-    $('#deleteTrip').submit(function(event) {
-        event.preventDefault();
+    $('.suitcase').on('click', '.deleteTrip', function() {
         let tripID = $(this).attr('data-id'); 
+        console.log('delete clicked');
         fetch(`/trips/${tripID}`, {
             method: 'DELETE',
             mode: 'cors',
@@ -157,7 +158,7 @@ function deleteTrip() {
             },
             redirect: 'follow',
             referrer: 'no-referrer',
-            body: JSON.stringify(data),
+            body: JSON.stringify({userId: localStorage.getItem('user')})
         })
         .then(response => response.json())
         .then(responseJson => displayTrip(responseJson));
@@ -213,6 +214,9 @@ function handleSignupResponse(data) {
 function checkLoggedIn() {
     if (localStorage.getItem('user')) {
         toggleDisplay();
+        fetch(`/users/${localStorage.getItem('user')}`)
+        .then(response => response.json()) // parses JSON response into native Javascript objects 
+        .then(responseJson => displayTrip(responseJson)); 
     }
 }
 
@@ -225,4 +229,5 @@ $(function() {
     handleIncrementButton();
     handleDecrementButton();
     handleToggleButton();
+    deleteTrip();
 })

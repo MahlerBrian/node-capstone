@@ -48,6 +48,59 @@ app.get('/trips/:id', (req, res) => {
         });
 });
 
+//create new trip
+app.post('/trips', (req, res) => {
+    const requiredFields = ['destination', 'duration'];
+    for (let i = 0; i < requiredFields.length; i++) {
+        const field = requiredFields[i];
+        if(!(field in req.body)) {
+            const message = `Missing \`${field}\` in request body`
+            console.error(message);
+            return res.status(400).send(message);
+        }
+    }
+
+    SavedTrip
+        .create({
+            destination: req.body.destination,
+            duration: req.body.duration,
+            suitcase: {
+                clothes: {
+                    shirts: req.body.duration,
+                    pants: req.body.duration /2,
+                    underwear: req.body.duration,
+                    socks: req.body.duration,
+                    jacket: 1,
+                    shoes: 1
+                },
+                toiletries: {
+                    toothbrush: false,
+                    toothpaste: false,
+                    deodorant: false,
+                    shampoo: false,
+                    floss: false
+                },
+                essentials: {
+                    passport: false,
+                    camera: false,
+                    phone: false
+                }
+            }
+        })
+        .then(trip => {
+            return User.findById(req.body.userId)
+            .then(user => {
+                user.trips.push(trip);
+                user.save();
+                res.status(201).json(user.serialize())
+            })
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ error: 'internal server error' });
+        });
+});
+
 //Updates extant trip:
 app.put('/trips/:id', (req, res) => {
     if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
@@ -100,92 +153,40 @@ app.put('/trips/:id', (req, res) => {
                     trip.suitcase[category][item] = true
                 }
             }
-            trip.save();
-            console.log(trip);
-            return User.findById(req.body.userId)
+            trip.save() 
+            return User.findOneAndUpdate({"_id": req.body.userId, "trips._id": req.params.id}, {"$set": {"trips.$": trip}})
             .then(user => {
-                console.log(user.trips[0].suitcase);
-                res.status(200).json(user.serialize())
-            })
-        })
-        .catch(err => res.status(500).json(err));
-    }
-});
-
-//delete extant trip
-app.delete('/trips/:id', (req, res) => {
-    const updated = {};
-    const updateableFields = ['suitcase'];
-    let items = Object.keys(suitcase);
-    SavedTrip
-        .findOneAndDelete(req.params.id)   
-        .then(() => {                               
-            console.log(`Deleted trip with id \`${req.params.id}\``);
-            res.status(204).end();
-        })
-        .catch(err => res.status(500).json(err));
-});
-
-//create new trip
-app.post('/trips', (req, res) => {
-    const requiredFields = ['destination', 'duration'];
-    for (let i = 0; i < requiredFields.length; i++) {
-        const field = requiredFields[i];
-        if(!(field in req.body)) {
-            const message = `Missing \`${field}\` in request body`
-            console.error(message);
-            return res.status(400).send(message);
-        }
-    }
-
-    SavedTrip
-        .create({
-            destination: req.body.destination,
-            duration: req.body.duration,
-            suitcase: {
-                clothes: {
-                    shirts: req.body.duration,
-                    pants: req.body.duration /2,
-                    underwear: req.body.duration,
-                    socks: req.body.duration,
-                    jacket: 1,
-                    shoes: 1
-                },
-                toiletries: {
-                    toothbrush: false,
-                    toothpaste: false,
-                    deodorant: false,
-                    shampoo: false,
-                    floss: false
-                },
-                essentials: {
-                    passport: false,
-                    camera: false,
-                    phone: false
-                }
-            }
-            /*this.suitcase.clothes.shirts = this.duration;
-            this.suitcase.clothes.pants = this.duration /2;
-            this.suitcase.clothes.underwear = this.duration;
-            this.suitcase.clothes.socks = this.duration;
-            this.suitcase.clothes.jacket = 1;
-            this.suitcase.clothes.shoes = 1;*/
-            //SavedTrip.suitcase.clothes.shirts.create('shirts', 4);??
-            //SavedTrip.suitcase.clothes.underwear('underwear', ${requiredFields[1]})
-        })
-        .then(trip => {
-            return User.findById(req.body.userId)
-            .then(user => {
-                user.trips.push(trip);
-                user.save();
-                res.status(201).json(user.serialize())
+                console.log(user);
+                res.status(200).json(user);
             })
         })
         .catch(err => {
-            console.error(err);
-            res.status(500).json({ error: 'internal server error' });
-        });
+            console.log(err);
+            res.status(500).json(err);
+        } 
+    )}
 });
+
+app.delete('/trips/:id', (req, res) => {
+    SavedTrip
+        .findByIdAndRemove(req.params.id)
+        .then(() => {
+            return User.findById(req.body.userId)
+        })
+        .then(user => {
+            let updatedTrips = user.trips.filter(trip => {
+            return trip._id != req.params.id;
+            });
+            user.trips = updatedTrips;
+            user.save();
+            res.status(204).json(user);
+        })      
+        .catch(err => {
+            console.log(err) 
+            res.status(500).json({ message: 'internal server error' });
+        })
+})
+
 
 
 //get extant user
@@ -203,6 +204,14 @@ app.get('/users', (req, res) => {
             res.status(500).json( {message: 'internal server error'} );
         })
 });
+
+app.get('/users/:id', (req, res) => {
+    User
+        .findById(req.params.id)
+        .then(user => {
+            res.status(200).json(user.serialize())
+        })
+})
 
 //post request for new user to login, password validation. 
 app.post('/users', (req, res) => {
@@ -282,41 +291,8 @@ app.put('/users/:id', (req, res) => {
         });
 });
 
-app.delete('/trips/:id', (req, res) => {
-    SavedTrip
-        .findByIdAndRemove(req.params.id)
-        .then(() => {
-            User.findById(req.body.userid)
-        })
-        .then((User) => {
-            let updatedTrips = user.trips.filter(trip => {
-                trip._id != req.params.id;
-            });
-            user.trips = updatedTrips;
-            user.save();
-            return res.status(204);
-        })      
-        .catch(err => res.status(500).json({ message: 'internal server error' }));
-})
 
 
-//change this to put request to delete a trip.
-app.put('/users/:id', (req, res) => {
-    SavedTrip
-        .remove({ user: req.params.id }) //not sure this is right?
-        .then(() => {
-            User
-                .findByIdAndRemove(req.params.id)
-                .then(() => {
-                    console.log(`Deleted trip owned by User \`${req.params.id}\``);
-                    res.status(204).json({ message: 'success' });
-                });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).json({ error: 'internal server error' });
-        });
-});
 
 
 function runServer(databaseUrl, port=PORT) {
