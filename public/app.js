@@ -14,7 +14,7 @@ function displayTrip(data) {
     for (let i=0; i < data.trips.length; i++) {
         console.log(i);
         console.log(data.trips[i].destination);
-        //create parent div here?
+        itemCounts += `<div class='itemContainer'> `
         itemCounts += `<p class='destination'>` + data.trips[i].destination + `</p>`
         itemCounts += `<p class='duration'>` + data.trips[i].duration + ' Days' + `</p>`
         itemCounts += `<button class="deleteTrip" data-id= '${data.trips[i]._id}'>Delete trip</button>`
@@ -26,22 +26,26 @@ function displayTrip(data) {
                 let itemCount;
                 if (category == 'clothes') {
                     console.log('category is clothes');
-                    itemCount = `<p>${item}: ${data.trips[i].suitcase[category][item]}<button class='incrementItem' data-id= '${data.trips[i]._id}' data-category= '${category}' data-item= '${item}'>+</button><button class='decrementItem' data-id= '${data.trips[i]._id}' data-category='${category}' data-item= '${item}'>-</button></p>`;
+                    itemCount = `<p class='itemValue'>${item}: <span id=itemCount>${data.trips[i].suitcase[category][item]}</span><button class='incrementItem' data-id= '${data.trips[i]._id}' data-category= '${category}' data-item= '${item}'>+</button><button class='decrementItem' data-id= '${data.trips[i]._id}' data-category='${category}' data-item= '${item}'>-</button></p>`;
                 }
                 else {
                     console.log('category !== clothes'); 
-                    itemCount = `<p>${item}: ${data.trips[i].suitcase[category][item]}<button class='toggleItem' data-id= '${data.trips[i]._id}' data-category='${category}' data-item= '${item}'>Toggle</button></p>`;
+                    itemCount = `<p class='itemValue'>${item}: <span id=itemToggle>${data.trips[i].suitcase[category][item]}</span><button class='toggleItem' data-id= '${data.trips[i]._id}' data-category='${category}' data-item= '${item}'>Toggle</button></p>`;
                 }
                 itemCounts += itemCount;
             }
         }
+        itemCounts += `</div>`
     }
-    $('.suitcase').html(itemCounts);
+    $('#tripDisplay').html(itemCounts);
 }
 
-
+//see- item on line 29, add id to each p-tag         use jquery to change text  inside p-tag  on line 46 and reset text
 function handleIncrementButton() {
-    $('.suitcase').on('click', '.incrementItem', function() {
+    $('#tripDisplay').on('click', '.incrementItem', function() {
+        let itemCount = $(this).parent().find('#itemCount').text();
+        itemCount = parseInt(itemCount)+1;
+        $(this).parent().find('#itemCount').text(itemCount);
         let tripID = $(this).attr('data-id');
         let category = $(this).attr('data-category');
         let item = $(this).attr('data-item');
@@ -60,15 +64,20 @@ function handleIncrementButton() {
             body: JSON.stringify({ category: category, id: tripID, item: item, action: 'increment', suitcase: true, userId: localStorage.getItem('user') }), 
         })
         .then(response => response.json()) // parses JSON response into native Javascript objects 
-        .then(responseJson => handleEditTripResponse(responseJson)); 
+        .then(responseJson => {
+            console.log(responseJson);
+        }) 
     })
 }
 
 function handleDecrementButton() {
-    $('.suitcase').on('click', '.decrementItem', function() {
+    $('#tripDisplay').on('click', '.decrementItem', function() {
         let tripID = $(this).attr('data-id');
         let category = $(this).attr('data-category');
         let item = $(this).attr('data-item');
+        let itemCount = $(this).parent().find('#itemCount').text();
+        itemCount = parseInt(itemCount)-1;
+        $(this).parent().find('#itemCount').text(itemCount);
         console.log(tripID, category, item);
         fetch(`/trips/${tripID}`, {
             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
@@ -84,15 +93,22 @@ function handleDecrementButton() {
             body: JSON.stringify({ category: category, id: tripID, item: item, action: 'decrement', suitcase: true, userId: localStorage.getItem('user') }), 
         })
         .then(response => response.json()) 
-        .then(responseJson => handleEditTripResponse(responseJson)); 
+        .then(responseJson => console.log(responseJson)) 
     })
 }
 
 function handleToggleButton() {
-    $('.suitcase').on('click', '.toggleItem', function() {
+    $('#tripDisplay').on('click', '.toggleItem', function() {
         let tripID = $(this).attr('data-id');
         let category = $(this).attr('data-category');
         let item = $(this).attr('data-item');
+        let itemToggle = $(this).parent().find('#itemToggle').text();
+        if (itemToggle === 'true') {
+            $(this).parent().find('#itemToggle').text('false');
+        }
+        else {
+            $(this).parent().find('#itemToggle').text('true');
+        }
         console.log(tripID, category, item);
         fetch(`/trips/${tripID}`, {
             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
@@ -108,7 +124,7 @@ function handleToggleButton() {
             body: JSON.stringify({ category: category, id: tripID, item: item, action: 'toggle', suitcase: true, userId: localStorage.getItem('user') }), 
         })
         .then(response => response.json()) // parses JSON response into native Javascript objects 
-        .then(responseJson => handleEditTripResponse(responseJson)); 
+        .then(responseJson => console.log(responseJson)); 
     })
 }
 
@@ -136,7 +152,7 @@ function makeNewTrip() {
             },
             redirect: 'follow', // manual, *follow, error
             referrer: 'no-referrer', // no-referrer, *client
-            body: JSON.stringify(data), // body data type must match "Content-Type" header
+            body: JSON.stringify(data) // body data type must match "Content-Type" header
         })
         .then(response => response.json()) // parses JSON response into native Javascript objects 
         .then(responseJson => displayTrip(responseJson)); 
@@ -145,9 +161,12 @@ function makeNewTrip() {
 
 
 function deleteTrip() {
-    $('.suitcase').on('click', '.deleteTrip', function() {
+    $('#tripDisplay').on('click', '.deleteTrip', function() {
+        $(this).parent().empty();
+        //console.log($(this).parent('.itemContainer'));
         let tripID = $(this).attr('data-id'); 
         console.log('delete clicked');
+        let data = {userId: localStorage.getItem('user')};
         fetch(`/trips/${tripID}`, {
             method: 'DELETE',
             mode: 'cors',
@@ -158,7 +177,7 @@ function deleteTrip() {
             },
             redirect: 'follow',
             referrer: 'no-referrer',
-            body: JSON.stringify({userId: localStorage.getItem('user')})
+            body: JSON.stringify(data)
         })
         .then(response => response.json())
         .then(responseJson => displayTrip(responseJson));
@@ -204,10 +223,44 @@ function handleSignup() {
     });
 }
 
+function handleLogin() {
+    $('#sign-in').submit(function(event) {
+        event.preventDefault();
+        let userName = $('#loginName').val();
+        let password = $('#loginPassword').val();
+        let data = {userName: userName, password: password};
+        fetch('/login', {
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, cors, *same-origin
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, *same-origin, omit
+            headers: {
+                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            redirect: 'follow', // manual, *follow, error
+            referrer: 'no-referrer', // no-referrer, *client
+            body: JSON.stringify(data), // body data type must match "Content-Type" header
+        })
+        .then(response => response.json()) // parses JSON response into native Javascript objects 
+        .then(responseJson => handleSignupResponse(responseJson)); 
+    });
+}
+
+function handleLogout() {
+    $('#logOut').click(function(event) {
+        localStorage.removeItem('user');
+        location.reload();
+    })
+}
+
 function handleSignupResponse(data) {
     console.log(data);
     localStorage.setItem('user', data.id);
     toggleDisplay();
+    fetch(`/users/${localStorage.getItem('user')}`)
+        .then(response => response.json()) // parses JSON response into native Javascript objects 
+        .then(responseJson => displayTrip(responseJson)); 
 }
 
 
@@ -223,6 +276,7 @@ function checkLoggedIn() {
 
 $(function() {
     //getAndDisplayTrip();
+    handleLogin();
     handleSignup();
     makeNewTrip();
     checkLoggedIn();
@@ -230,4 +284,5 @@ $(function() {
     handleDecrementButton();
     handleToggleButton();
     deleteTrip();
+    handleLogout();
 })

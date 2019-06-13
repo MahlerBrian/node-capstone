@@ -153,12 +153,15 @@ app.put('/trips/:id', (req, res) => {
                     trip.suitcase[category][item] = true
                 }
             }
-            trip.save() 
-            return User.findOneAndUpdate({"_id": req.body.userId, "trips._id": req.params.id}, {"$set": {"trips.$": trip}})
-            .then(user => {
-                console.log(user);
-                res.status(200).json(user);
-            })
+            return trip.save()
+            .then(trip => {
+                console.log(trip);
+                return User.findOneAndUpdate({"_id": req.body.userId, "trips._id": req.params.id}, {"$set": {"trips.$": trip}})
+                .then(user => {
+                    console.log(user);
+                    res.status(200).json(user);
+                })
+            })  
         })
         .catch(err => {
             console.log(err);
@@ -179,7 +182,7 @@ app.delete('/trips/:id', (req, res) => {
             });
             user.trips = updatedTrips;
             user.save();
-            res.status(204).json(user);
+            res.status(200).json(user);
         })      
         .catch(err => {
             console.log(err) 
@@ -291,7 +294,35 @@ app.put('/users/:id', (req, res) => {
         });
 });
 
-
+app.post('/login', (req, res) => {
+    return User.findOne({ userName: req.body.userName })
+            .then(user => {
+                if (user) {
+                    return user.validatePassword(req.body.password)
+                    .then(passwordCorrect => {
+                        if (passwordCorrect) {
+                            res.status(200).json(user.serialize())
+                        }
+                        else {
+                            res.status(400).send('incorrect password')
+                        }
+                    })
+                    .then(user => res.status(201).json(user.serialize()))
+                    .catch(err => {
+                        console.error(err);
+                        res.status(500).json({ error: 'internal server error' });
+                    });
+                }
+                else {
+                    const message = `User not found`;
+                    return res.status(400).send(message)
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ error: 'internal server error' });
+            });   
+})
 
 
 

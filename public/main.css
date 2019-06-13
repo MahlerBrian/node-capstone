@@ -2,11 +2,31 @@
     box-sizing: border-box;
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (max-width: 1024px) {
     
     main{
         text-align: center;
-        background: lightblue;
+        background-image: url('/images/airport-graphic-672x370.jpg');
+        background-repeat: no-repeat;
+        background-position: center top;
+        background-attachment: fixed;
+
+    }
+
+    body{
+        width: 100%;
+        margin: 0;
+        padding: 1px;
+        background: azure;
+    }
+
+    header h1{
+        font-family: Amatic SC, cursive;  
+    }
+
+    header {
+        font-family: Georgia, 'Times New Roman', Times, serif;
+        color: green;
     }
 
     #landing{
@@ -14,6 +34,7 @@
         display: inline-block;
         padding: 15px;
         width: 100%;
+        top: 65px;
     }
 
     #sign-in, #sign-up{
@@ -22,27 +43,33 @@
     }
 
 
-    #tripDisplay{
+    #dashboard{
+        position: relative;
+        display: none;
+        width: 100%;
+        background: lightcoral;
+    }
+
+    /* #tripDisplay{
         display: inline-block;
         text-align: left;
         overflow-x: auto;
         white-space: nowrap;
         background: lightyellow;
-    }
+        width: 80%;
+    } */
 
-    #dashboard{
-        position: relative;
-        display: none;
-        width: 100%;
+    .itemContainer{
+        display: inline-block;
     }
 
     .suitcase{
-        position: absolute;
+        width: 30%;
+        height: 50%;
         text-align: left;
         padding: 14px;
         border: solid, 4px, black;
         background: lightseagreen;
-        float: left;
     }
 
     .destination, .duration{
@@ -50,4 +77,171 @@
     } 
 }
 
+main{
+    
+}
 
+body{
+    width: 100%;
+    margin: 0;
+    padding: 1px;
+    background: azure;
+    text-align: center;
+    background-image: url('/images/airport-graphic-672x370.jpg');
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-attachment: fixed;
+    opacity: 0.7;
+}
+
+header h1{
+    font-family: Amatic SC, cursive;
+    font-size: 55px;
+    color: blue;
+}
+
+header {
+    font-family: Open Sans Condensed, sans-serif;
+    font-size: 25px;
+    color: brown;
+}
+
+form h3{
+    font-family: Amatic SC, cursive;
+    font-size: 30px;
+    color: green;
+    margin: 5px;
+}
+
+#landing{
+    position: relative;
+    display: inline-block;
+    padding: 15px;
+    width: 100%;
+    
+}
+
+#sign-in, #sign-up{
+    border: solid, 1px, black;
+    padding: 15px;
+    font-family: Open Sans Condensed, sans-serif;
+    font-size: 25px;
+    color: green;
+}
+
+
+#dashboard{
+    position: relative;
+    display: none;
+    width: 100%;
+    top: 35px;
+    font-family: Open Sans Condensed, sans-serif;
+    font-size: 25px;
+    color: green;
+}
+
+/* #tripDisplay{
+    display: inline-block;
+    text-align: left;
+    overflow-x: auto;
+    white-space: nowrap;
+    background: lightyellow;
+    width: 80%;
+} */
+
+.itemContainer{
+    display: inline-block;
+}
+
+.suitcase{
+    width: 30%;
+    height: 50%;
+    text-align: left;
+    padding: 14px;
+    border: solid, 4px, black;
+    background: lightseagreen;
+}
+
+.destination, .duration{
+    font-family: Amatic SC, cursive;
+    color: green;
+    margin: 5px;
+}
+
+.itemContainer h2{
+    font-size: 30px;
+}
+
+.destination, .duration{
+    font-size: 50px;
+} 
+
+.createTrip{
+    color: white;
+    border: none;
+    border-radius: 8px;
+    background-color: blue;
+    padding: 10px, 15px;
+    font-size: 15px;
+    margin: 5px;
+}
+
+.incrementItem, .decrementItem{
+    color: white;
+    border: none;
+    border-radius: 8px;
+    background-color: blue; 
+    padding: 10px, 15px;
+    font-size: 20px;
+    margin: 5px;
+}
+
+.deleteTrip{
+    color: white;
+    border: none;
+    border-radius: 8px;
+    background-color: blue; 
+    padding: 10px, 15px;
+    font-size: 20px;
+    margin: 5px;
+}
+
+.toggleItem{
+    color: white;
+    border: none;
+    border-radius: 8px;
+    background-color: brown;
+    padding: 10px, 15px;
+    font-size: 15px;
+    margin: 5px;
+}
+
+.incrementItem:hover{
+    background-color: yellow;
+    color: black;
+}
+
+.decrementItem:hover{
+    background-color: yellow;
+    color: black;
+}
+
+.toggleItem:hover{
+    background-color: yellow;
+    color: black;
+}
+
+.submit:hover{
+    background-color: yellow;
+    color: black;
+}
+
+.deleteTrip:hover{
+    background-color: yellow;
+    color: black;
+}
+
+.createTrip:hover{
+    background-color: yellow;
+    color: black;
+}
