@@ -18,7 +18,7 @@
     }
     
     #title{
-        position: fixed;
+        position: static;
         font-family: Amatic SC, cursive;
         font-size: 120px;
         color: green;
