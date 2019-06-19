@@ -17,13 +17,16 @@
     <body>
         <main aria-live="polite">
             <header id="header" role="banner">
-                <h1>Pack your bags...</h1>
-                <h4>Tell BagCheck where you're going and for how long.</h4> 
-                <h4>We'll give you a packing list template.</h4>
-                <h4>Mark items as 'packed' while you pack, so you'll never forget to bring what you need.</h4>              
+                <h1 id="title">BagCheck</h1>                  
             </header>
             
             <div id="landing">
+                <section id="intro">
+                    <h1 id="subTitle">Pack your bags...</h1>
+                    <h4>Tell BagCheck where you're going and for how long.</h4> 
+                    <h4>We'll give you a packing list template.</h4>
+                    <h4>Mark items as 'packed' while you pack, so you'll never forget to bring what you need.</h4>
+                </section>
                 <form id="sign-up">
                     <h3>New user? Sign up here:</h3>
                     <label>Username:</label><input type="text" id="signUpUsername" placeholder="Enter your username"><br>
@@ -45,7 +48,7 @@
                     <h3>Where are you going?</h3>
                     <label>Destination:</label><input type="text" id="form-destination" placeholder="Enter your destination">
                     <label>Duration:</label><input type="number" id="form-duration" placeholder="Enter the number of days you'll be there">
-                    <button type="submit" class="createTrip">create new trip</button>
+                    <button type="submit" class="createTrip">Create New Trip</button> <button id="logOut">Log Out</button>
                 </form>
 
                 <section id="tripDisplay">
@@ -54,7 +57,7 @@
                         
                     </div> -->
                 </section>
-                <button id="logOut">Log Out</button>
+                
             </div>
             
         </main>    
