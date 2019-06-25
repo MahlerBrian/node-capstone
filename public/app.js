@@ -1,35 +1,19 @@
 
-
-
-//Change this later- should mock_trip_data just be data?
-function getTripData(callbackFn) {
-    setTimeout(function(){ callbackFn(MOCK_TRIP_DATA)}, 100);
-}
-
-
 function displayTrip(data) {
-    console.log("displaying trip");
-    console.log(data);
     let itemCounts = "";
     for (let i=0; i < data.trips.length; i++) {
-        console.log(i);
-        console.log(data.trips[i].destination);
         itemCounts += `<div class='itemContainer'> `
         itemCounts += `<p class='destination'>` + data.trips[i].destination + `</p>`
         itemCounts += `<p class='duration'>` + data.trips[i].duration + ' Days' + `</p>`
         itemCounts += `<button class="deleteTrip" data-id= '${data.trips[i]._id}'>Delete trip</button>`
         for (let category in data.trips[i].suitcase) {
-            console.log(category);
             itemCounts += `<h2>${category}</h2>`;
             for (let item in data.trips[i].suitcase[category]) {
-                console.log(item);
                 let itemCount;
                 if (category == 'clothes') {
-                    console.log('category is clothes');
                     itemCount = `<p class='itemValue'>${item}: <span id=itemCount>${data.trips[i].suitcase[category][item]}</span><button class='incrementItem' data-id= '${data.trips[i]._id}' data-category= '${category}' data-item= '${item}'>+</button><button class='decrementItem' data-id= '${data.trips[i]._id}' data-category='${category}' data-item= '${item}'>-</button></p>`;
                 }
                 else {
-                    console.log('category !== clothes'); 
                     itemCount = `<p class='itemValue'>${item}: <span id=itemToggle>${data.trips[i].suitcase[category][item]}</span><button class='toggleItem' data-id= '${data.trips[i]._id}' data-category='${category}' data-item= '${item}'>Toggle</button></p>`;
                 }
                 itemCounts += itemCount;
@@ -40,7 +24,7 @@ function displayTrip(data) {
     $('#tripDisplay').html(itemCounts);
 }
 
-//see- item on line 29, add id to each p-tag         use jquery to change text  inside p-tag  on line 46 and reset text
+
 function handleIncrementButton() {
     $('#tripDisplay').on('click', '.incrementItem', function() {
         let itemCount = $(this).parent().find('#itemCount').text();
@@ -49,7 +33,6 @@ function handleIncrementButton() {
         let tripID = $(this).attr('data-id');
         let category = $(this).attr('data-category');
         let item = $(this).attr('data-item');
-        console.log(tripID, category, item);
         fetch(`/trips/${tripID}`, {
             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, cors, *same-origin
@@ -78,7 +61,6 @@ function handleDecrementButton() {
         let itemCount = $(this).parent().find('#itemCount').text();
         itemCount = parseInt(itemCount)-1;
         $(this).parent().find('#itemCount').text(itemCount);
-        console.log(tripID, category, item);
         fetch(`/trips/${tripID}`, {
             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, cors, *same-origin
@@ -109,7 +91,6 @@ function handleToggleButton() {
         else {
             $(this).parent().find('#itemToggle').text('true');
         }
-        console.log(tripID, category, item);
         fetch(`/trips/${tripID}`, {
             method: 'PUT', // *GET, POST, PUT, DELETE, etc.
             mode: 'cors', // no-cors, cors, *same-origin
@@ -128,9 +109,7 @@ function handleToggleButton() {
     })
 }
 
-//what was this for?
 function handleEditTripResponse(data) {
-    console.log(data);
     displayTrip(data);
 }
 
@@ -255,7 +234,6 @@ function handleLogout() {
 }
 
 function handleSignupResponse(data) {
-    console.log(data);
     localStorage.setItem('user', data.id);
     toggleDisplay();
     fetch(`/users/${localStorage.getItem('user')}`)
@@ -275,7 +253,6 @@ function checkLoggedIn() {
 
 
 $(function() {
-    //getAndDisplayTrip();
     handleLogin();
     handleSignup();
     makeNewTrip();

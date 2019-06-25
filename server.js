@@ -111,10 +111,8 @@ app.put('/trips/:id', (req, res) => {
 
     const updated = {};
     const updateableFields = ['destination', 'duration',];
-    console.log(req.body);
 
     if (req.body.suitcase == false) {
-        console.log('no suitcase');
         updateableFields.forEach(field => {
             if (field in req.body) {
                 updated[field] = req.body[field];
@@ -123,7 +121,7 @@ app.put('/trips/:id', (req, res) => {
     
         SavedTrip
             .findByIdAndUpdate(req.params.id, { $set: updated }, { new: true })
-            .then(updated => res.status(204).end())   //used to be 'updatedTrip'
+            .then(updated => res.status(204).end())   
             .catch(err => res.status(500).json(err));
     }
 
@@ -132,33 +130,26 @@ app.put('/trips/:id', (req, res) => {
         .then(trip => {
             let category = req.body.category;
             let item = req.body.item;
-            console.log(trip);
-            console.log(req.body.action);
+
             if (req.body.action === 'increment') {
                 trip.suitcase[category][item] +=1;
             }
             else if (req.body.action === 'decrement') {
                 trip.suitcase[category][item] -=1;
             }
-            //write boolean toggle code here?
+            
             else if (req.body.action === 'toggle') {
-                console.log(category, item);
-                console.log(trip.suitcase[category][item])
                 if (trip.suitcase[category][item] === true) {
-                    console.log('item is true');
                     trip.suitcase[category][item] = false
                 }
                 else {
-                    console.log('item is false');
                     trip.suitcase[category][item] = true
                 }
             }
             return trip.save()
             .then(trip => {
-                console.log(trip);
                 return User.findOneAndUpdate({"_id": req.body.userId, "trips._id": req.params.id}, {"$set": {"trips.$": trip}})
                 .then(user => {
-                    console.log(user);
                     res.status(200).json(user);
                 })
             })  

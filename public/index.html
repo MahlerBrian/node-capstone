@@ -15,10 +15,11 @@
     </head>
 
     <body>
+        <header id="header" role="heading" aria-live="polite">
+            <h1 id="title">BagCheck</h1>                  
+        </header>
+        
         <main aria-live="polite">
-            <header id="header" role="banner">
-                <h1 id="title">BagCheck</h1>                  
-            </header>
             
             <div id="landing">
                 <section id="intro">
@@ -51,11 +52,8 @@
                     <button type="submit" class="createTrip">Create New Trip</button> <button id="logOut">Log Out</button>
                 </form>
 
-                <section id="tripDisplay">
-                    <!-- <div class="suitcase">
+                <section id="tripDisplay" aria-live="assertive">
                     
-                        
-                    </div> -->
                 </section>
                 
             </div>

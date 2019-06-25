@@ -75,7 +75,6 @@ describe('Trips API resource', function () {
 
   beforeEach(function () {
     return seedTripData();
-    // return seedUserData();
   });
 
   afterEach(function () {
@@ -136,30 +135,7 @@ describe('Trips API resource', function () {
       });
   });
 
-  /*it('should create new user', function () {
-      const newUser = {
-        firstName: faker.name.findName(),
-        userName: faker.name.findName(),
-        password: faker.lorem.word(),
-      };
-
-      return chai.request(app)
-        .post('/users')
-        .send(newUser)
-        .then(function (res) {
-          expect(res).to.have.status(201);
-          expect(res).to.be.json;
-          expect(res.body).to.be.a('object');
-          expect(res.body).to.include.keys('firstName', 'userName', 'id', 'trips');
-          expect(res.body.firstName).to.equal(newUser.firstName);
-          expect(res.body.userName).to.equal(newUser.userName);
-          return User.findById(res.body.id);
-        })
-        .then(function (user) {
-          expect(user.firstName).to.equal(newUser.firstName);
-          expect(user.userName).to.equal(newUser.userName);
-        })
-    });*/
+ 
 
 
     it('should create new user', function () {
